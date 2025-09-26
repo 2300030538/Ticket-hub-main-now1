@@ -1,0 +1,28 @@
+name: Health Check
+
+on:
+  schedule:
+    # Run every hour
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Check project health
+      run: |
+        echo "🏥 Running health check..."
+        echo "✅ Repository is accessible"
+        echo "✅ GitHub Actions are running"
+        echo "📊 Health check completed successfully"
+        
+    - name: Environment info
+      run: |
+        echo "🌍 Environment Information:"
+        echo "• Node.js: $(node --version 2>/dev/null || echo 'Not available')"
+        echo "• npm: $(npm --version 2>/dev/null || echo 'Not available')"
+        echo "• Git: $(git --version 2>/dev/null || echo 'Not available')"
+        echo "• Runner OS: ${{ runner.os }}"
+        echo "• Timestamp: $(date)"

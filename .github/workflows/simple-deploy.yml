@@ -1,0 +1,51 @@
+name: Simple Deploy
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      
+    - name: Configure AWS credentials (if secrets available)
+      if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1
+        
+    - name: Deploy to AWS (if configured)
+      if: ${{ secrets.AWS_ACCESS_KEY_ID != '' }}
+      run: |
+        echo "🚀 Starting AWS deployment..."
+        if [ -f "aws-deployment/deploy.sh" ]; then
+          chmod +x aws-deployment/deploy.sh
+          ./aws-deployment/deploy.sh
+        else
+          echo "⚠️ No deployment script found"
+        fi
+        
+    - name: Deployment complete
+      run: |
+        echo "✅ Deployment workflow completed"
+        echo "🔗 Check your AWS console for deployment status"
