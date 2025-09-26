@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://2300030538.github.io/ticket-hub-main-now1"
   "scripts": {
     "dev": "vite",
     "build": "vite build",
